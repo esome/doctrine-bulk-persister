@@ -1,0 +1,25 @@
+{
+    "name": "esome/doctrine-bulk-persister",
+    "description" : "A doctrine extension for bulk operations.",
+    "license": "proprietary",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "esome\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "doctrine/orm": "^2.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.6"
+    },
+    "scripts": {
+    }
+}
