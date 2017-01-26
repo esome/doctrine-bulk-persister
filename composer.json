@@ -2,7 +2,7 @@
     "name": "esome/doctrine-bulk-persister",
     "description" : "A doctrine extension for bulk operations.",
     "license": "proprietary",
-    "type": "project",
+    "type": "library",
     "autoload": {
         "psr-4": {
             "esome\\": "src"
