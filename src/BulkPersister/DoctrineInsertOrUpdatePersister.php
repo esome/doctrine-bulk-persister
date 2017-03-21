@@ -63,11 +63,7 @@ class DoctrineInsertOrUpdatePersister implements BulkPersisterInterface
                 $quotedColumnNames[] = $quotedColumnName;
 
                 if (!in_array($columnName, $uniqueColumns)) {
-                    if ($columnName === 'meta_updated_at') {
-                        $updateColumns[] = sprintf("%s = NOW()", $quotedColumnName);
-                    } else {
-                        $updateColumns[] = sprintf("%s = VALUES(%s)", $quotedColumnName, $quotedColumnName);
-                    }
+                    $updateColumns[] = sprintf("%s = VALUES(%s)", $quotedColumnName, $quotedColumnName);
                 }
             };
 
