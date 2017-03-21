@@ -61,6 +61,9 @@ class DoctrineReplaceIntoPersister implements BulkPersisterInterface
                 $placeholders = [];
                 foreach ($metadata->columnNames as $fieldName => $columnName) {
                     $getter = 'get' . ucfirst($fieldName);
+                    if (!method_exists($entity, $getter)) {
+                        $getter = 'is' . ucfirst($fieldName);
+                    }
                     $value = $entity->$getter();
                     $type = Type::getType($metadata->getTypeOfField($fieldName));
 
