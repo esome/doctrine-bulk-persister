@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -it $(docker-compose ps | grep php | awk '{print $1;}') composer "$@"
