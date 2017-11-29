@@ -10,11 +10,11 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
-use esome\BulkPersister\DoctrineReplaceIntoPersister;
+use esome\BulkPersister\DoctrineInsertOrUpdatePersister;
 use esome\Tests\BulkPersister\TestEntity;
 use PHPUnit\Framework\TestCase;
 
-class DoctrineReplaceIntoPersisterTest extends TestCase
+class DoctrineInsertOrUpdatePersisterTest extends TestCase
 {
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
@@ -133,10 +133,14 @@ class DoctrineReplaceIntoPersisterTest extends TestCase
 
         $this->mockConnection->expects($this->once())
             ->method('prepare')
-            ->with("REPLACE INTO test_entities\n(id, date_start, name, `like`, flag, flagged)\nVALUES\n" . $expectedValues)
+            ->with(
+                "INSERT INTO test_entities\n(date_start, name, `like`, flag, flagged)\nVALUES\n"
+                . $expectedValues
+                . "\nON DUPLICATE KEY UPDATE\ndate_start = VALUES(date_start),name = VALUES(name),`like` = VALUES(`like`),flag = VALUES(flag),flagged = VALUES(flagged)"
+            )
             ->will($this->returnValue($mockStatement));
 
-        $persister = new DoctrineReplaceIntoPersister($this->mockEntityManager);
+        $persister = new DoctrineInsertOrUpdatePersister($this->mockEntityManager);
 
         foreach ($entities as $entity) {
             $persister->persist($entity);
@@ -150,34 +154,31 @@ class DoctrineReplaceIntoPersisterTest extends TestCase
         return [
             'one entity' => [
                 'expectedParameters' => [
-                    ':id0' => null,
                     ':dateStart0' => '2016-12-24',
                     ':name0' => 'Test Name',
                     ':like0' => 'YES',
                     ':flag0' => 1,
                     ':flagged0' => 1,
                 ],
-                'expectedValues' => "(:id0, :dateStart0, :name0, :like0, :flag0, :flagged0)",
+                'expectedValues' => "(:dateStart0, :name0, :like0, :flag0, :flagged0)",
                 'entities' => [
                     new TestEntity(null, \DateTime::createFromFormat('Y-m-d', '2016-12-24'), 'Test Name', 'YES', true, true),
                 ],
             ],
             'two entities' => [
                 'expectedParameters' => [
-                    ':id0' => null,
                     ':dateStart0' => '2016-12-24',
                     ':name0' => 'Test Name',
                     ':like0' => 'YES',
                     ':flag0' => 1,
                     ':flagged0' => 1,
-                    ':id1' => 12,
                     ':dateStart1' => '2016-10-04',
                     ':name1' => 'Other Name',
                     ':like1' => 'NO',
                     ':flag1' => 1,
                     ':flagged1' => 1,
                 ],
-                'expectedValues' => "(:id0, :dateStart0, :name0, :like0, :flag0, :flagged0),\n(:id1, :dateStart1, :name1, :like1, :flag1, :flagged1)",
+                'expectedValues' => "(:dateStart0, :name0, :like0, :flag0, :flagged0),\n(:dateStart1, :name1, :like1, :flag1, :flagged1)",
                 'entities' => [
                     new TestEntity(null, \DateTime::createFromFormat('Y-m-d', '2016-12-24'), 'Test Name', 'YES', true, true),
                     new TestEntity(12, \DateTime::createFromFormat('Y-m-d', '2016-10-04'), 'Other Name', 'NO', true, true),
@@ -197,7 +198,7 @@ class DoctrineReplaceIntoPersisterTest extends TestCase
         $this->mockConnection->expects($this->never())
             ->method('prepare');
 
-        $persister = new DoctrineReplaceIntoPersister($this->mockEntityManager);
+        $persister = new DoctrineInsertOrUpdatePersister($this->mockEntityManager);
 
         $persister->flushAndClear();
     }
@@ -213,7 +214,7 @@ class DoctrineReplaceIntoPersisterTest extends TestCase
         $this->mockConnection->expects($this->never())
             ->method('prepare');
 
-        $persister = new DoctrineReplaceIntoPersister($this->mockEntityManager);
+        $persister = new DoctrineInsertOrUpdatePersister($this->mockEntityManager);
 
         $persister->flushAndClear(TestEntity::class);
     }

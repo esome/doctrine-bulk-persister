@@ -16,7 +16,7 @@ class BulkFlushDecoratorTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entity = new TestEntity(1, new \DateTime(), 'name', 'YES');
+        $entity = new TestEntity(1, new \DateTime(), 'name', 'YES', true, true);
 
         $persister->expects($this->once())
             ->method('persist')
@@ -39,8 +39,8 @@ class BulkFlushDecoratorTest extends TestCase
 
         $decorator = new BulkFlushDecorator($persister, 2);
 
-        $decorator->persist(new TestEntity(1, new \DateTime(), 'name1', 'YES1'));
-        $decorator->persist(new TestEntity(2, new \DateTime(), 'name2', 'YES2'));
+        $decorator->persist(new TestEntity(1, new \DateTime(), 'name1', 'YES1', true, true));
+        $decorator->persist(new TestEntity(2, new \DateTime(), 'name2', 'YES2', true, true));
     }
 
     public function testFlushAndClearWithClassFilterWithoutData()

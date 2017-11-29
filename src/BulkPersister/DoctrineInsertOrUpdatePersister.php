@@ -78,6 +78,9 @@ class DoctrineInsertOrUpdatePersister implements BulkPersisterInterface
                         continue;
                     }
                     $getter = 'get' . ucfirst($fieldName);
+                    if (!method_exists($entity, $getter)) {
+                        $getter = 'is' . ucfirst($fieldName);
+                    }
                     $value = $entity->$getter();
                     $type = Type::getType($metadata->getTypeOfField($fieldName));
 
@@ -96,9 +99,7 @@ class DoctrineInsertOrUpdatePersister implements BulkPersisterInterface
             }
 
             $statement = sprintf(
-                "INSERT INTO %s\n(%s)\nVALUES\n%s
-                 ON DUPLICATE KEY UPDATE %s
-                ",
+                "INSERT INTO %s\n(%s)\nVALUES\n%s\nON DUPLICATE KEY UPDATE\n%s",
                 $metadata->table['name'],
                 implode(', ', $quotedColumnNames),
                 implode(",\n", $placeHolderRows),

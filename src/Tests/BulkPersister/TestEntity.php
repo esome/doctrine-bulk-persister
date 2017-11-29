@@ -40,18 +40,34 @@ class TestEntity
     private $like;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var boolean
+     */
+    private $flag;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var boolean
+     */
+    private $flagged;
+
+    /**
      * TestEntity constructor.
      * @param int $id
      * @param \DateTime $dateStart
      * @param string $name
      * @param string $like
+     * @param bool $flag
+     * @param bool $flagged
      */
-    public function __construct($id, $dateStart, $name, $like)
+    public function __construct($id, $dateStart, $name, $like, $flag, $flagged)
     {
         $this->setId($id);
         $this->setDateStart($dateStart);
         $this->setName($name);
         $this->setLike($like);
+        $this->setFlag($flag);
+        $this->setFlagged($flagged);
     }
 
     /**
@@ -116,6 +132,38 @@ class TestEntity
     public function setLike($like)
     {
         $this->like = $like;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFlag()
+    {
+        return $this->flag;
+    }
+
+    /**
+     * @param bool $flag
+     */
+    public function setFlag($flag)
+    {
+        $this->flag = $flag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFlagged()
+    {
+        return $this->flagged;
+    }
+
+    /**
+     * @param bool $flagged
+     */
+    public function setFlagged($flagged)
+    {
+        $this->flagged = $flagged;
     }
 
 }
